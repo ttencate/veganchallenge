@@ -22,6 +22,9 @@ def cached_fetch(url, cache_key, postdata=None):
             out_file.write(data)
         return data
 
+def tex_encode(s):
+    return s.replace('&', '\\&')
+
 def process_recipe(name, url):
     recipe = cached_fetch(url, '%s.html' % name)
     soup = BeautifulSoup(recipe, 'html.parser')
@@ -37,22 +40,22 @@ def process_recipe(name, url):
     directions = bereiding.text.strip()
 
     with open(os.path.join('include', '%s.tex' % name), mode='wt', encoding='utf-8') as out_recipe:
-        out_recipe.write('\\begin{recipe}{%s}\n' % title)
+        out_recipe.write('\\begin{recipe}{%s}\n' % tex_encode(title))
         out_recipe.write('\n')
 
         out_recipe.write('\\begin{recipesummary}\n')
-        out_recipe.write('%s\n' % summary)
+        out_recipe.write('%s\n' % tex_encode(summary))
         out_recipe.write('\\end{recipesummary}\n')
         out_recipe.write('\n')
 
         out_recipe.write('\\begin{ingredients}\n')
         for ingredient in ingredients:
-            out_recipe.write('\\item %s\\n' % ingredient)
+            out_recipe.write('\\item %s\n' % tex_encode(ingredient))
         out_recipe.write('\\end{ingredients}\n')
         out_recipe.write('\n')
 
         out_recipe.write('\\begin{directions}\n')
-        out_recipe.write('%s\n' % directions)
+        out_recipe.write('%s\n' % tex_encode(directions))
         out_recipe.write('\\end{directions}\n')
         out_recipe.write('\n')
 
@@ -76,7 +79,7 @@ with open(os.path.join('include', 'dagmenus.tex'), mode='wt', encoding='utf-8') 
             day = h2.text.rstrip(':').replace('  ', ' ').capitalize()
             print('# %s' % day)
 
-            out_dagmenus.write('\\begin{dagmenu}{%s}\n' % day)
+            out_dagmenus.write('\\begin{dagmenu}{%s}\n' % tex_encode(day))
 
             for receptitem in dagmenu.find_all(class_='receptitem'):
                 meal = receptitem.find(class_='headtitle').text.capitalize()
