@@ -10,15 +10,15 @@ from bs4 import BeautifulSoup
 def cached_fetch(url, cache_key, postdata=None):
     cache_file = os.path.join('cache', cache_key)
     try:
-        with open(cache_file, mode='rt', encoding='utf-8') as in_file:
+        with open(cache_file, mode='rb') as in_file:
             return in_file.read()
     except Exception as ex:
         print('Fetching %s...' % url, file=sys.stderr)
         if postdata is not None and postdata is not bytes:
             postdata = bytes(postdata, 'utf-8')
         with urllib.request.urlopen(url, postdata) as in_url:
-            data = in_url.read().decode('utf-8')
-        with open(cache_file, mode='wt', encoding='utf-8') as out_file:
+            data = in_url.read()
+        with open(cache_file, mode='wb') as out_file:
             out_file.write(data)
         return data
 
@@ -26,7 +26,7 @@ def tex_encode(s):
     return s.replace('&', '\\&')
 
 def process_recipe(name, url):
-    recipe = cached_fetch(url, '%s.html' % name)
+    recipe = cached_fetch(url, '%s.html' % name).decode('utf-8')
     soup = BeautifulSoup(recipe, 'html.parser')
 
     title = soup.find('h1').text.strip()
@@ -35,6 +35,12 @@ def process_recipe(name, url):
     summary = intro.text.strip()
     ingredienten, bereiding = [h2.parent for h2 in soup.find_all('h2', class_='recipetitle')]
 
+    picture_url = soup.find(class_='wp-post-image')['src']
+    picture_name = picture_url.split('/')[-1].replace('_', '-')
+    picture_data = cached_fetch(picture_url, picture_name)
+    with open(os.path.join('pictures', picture_name), mode='wb') as out_picture:
+        out_picture.write(picture_data)
+
     ingredients = [li.text.strip() for li in ingredienten.find_all('li')]
     bereiding.find('h2').extract()
     directions = bereiding.text.strip()
@@ -42,6 +48,10 @@ def process_recipe(name, url):
     with open(os.path.join('include', '%s.tex' % name), mode='wt', encoding='utf-8') as out_recipe:
         out_recipe.write('\\begin{recipe}{%s}\n' % tex_encode(title))
         out_recipe.write('\n')
+
+        out_recipe.write('\\begin{recipepicture}\n')
+        out_recipe.write('\\includegraphics{pictures/%s}\n' % picture_name)
+        out_recipe.write('\\end{recipepicture}\n')
 
         out_recipe.write('\\begin{recipesummary}\n')
         out_recipe.write('%s\n' % tex_encode(summary))
@@ -69,7 +79,7 @@ with open(os.path.join('include', 'dagmenus.tex'), mode='wt', encoding='utf-8') 
             '2017-04-17',
             '2017-04-24',
             ]:
-        week = cached_fetch('https://veganchallenge.nl/getmenu/', '%s.html' % date, 'date=%s' % date)
+        week = cached_fetch('https://veganchallenge.nl/getmenu/', '%s.html' % date, 'date=%s' % date).decode('utf-8')
         soup = BeautifulSoup(week, 'html.parser')
         for dagmenu in soup.find_all(class_='_dagmenu'):
 

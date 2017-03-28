@@ -1,7 +1,18 @@
 \documentclass{article}
 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex]{graphicx}
+\usepackage{textcomp}
+
+\DeclareUnicodeCharacter{00BC}{1/4}
+\DeclareUnicodeCharacter{00BD}{1/2}
+\DeclareUnicodeCharacter{00BD}{3/4}
+\DeclareUnicodeCharacter{2103}{\textdegree{}C}
+
 \newenvironment{dagmenu}[1]{}{}
 \newenvironment{recipe}[1]{}{}
+\newenvironment{recipepicture}{}{}
 \newenvironment{recipesummary}{}{}
 \newenvironment{ingredients}{\begin{itemize}}{\end{itemize}}
 \newenvironment{directions}{}{}
