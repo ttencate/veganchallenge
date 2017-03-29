@@ -47,6 +47,7 @@ def process_recipe(name, url):
 
     with open(os.path.join('include', '%s.tex' % name), mode='wt', encoding='utf-8') as out_recipe:
         out_recipe.write('\\begin{recipe}{%s}\n' % tex_encode(title))
+        out_recipe.write('%% %s\n' % url)
         out_recipe.write('\n')
 
         out_recipe.write('\\begin{recipepicture}\n')
