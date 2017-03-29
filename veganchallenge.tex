@@ -1,7 +1,8 @@
-\documentclass[a4paper,landscape,10pt]{article}
+\documentclass[a4paper,10pt]{article}
 
 \usepackage[utf8]{inputenc}
-\usepackage{cmbright}
+\usepackage{PTSansNarrow}
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
 \usepackage[T1]{fontenc}
 \usepackage[pdftex]{graphicx}
 \usepackage{textcomp}
@@ -25,23 +26,21 @@
 \newcommand{\includerecipe}[2]{\def\meal{#1}\input{#2}}
 \newenvironment{dagmenu}[1]{%
   {\centering\textbf{#1}\par}%
-  \begin{multicols*}{4}%
-  \gdef\recipebreak{}%
+  \begin{multicols}{3}%
 }{%
-  \end{multicols*}%
+  \end{multicols}%
   \clearpage%
 }
 \newenvironment{recipe}{%
-  \recipebreak%
-  \gdef\recipebreak{\par\columnbreak}%
 }{%
 }
-\newcommand{\recipetitle}[1]{\meal: \textbf{#1}\par\vskip 1mm}
-\newcommand{\recipepicture}[1]{\includegraphics[width=\linewidth,height=0.6\linewidth,clip]{#1}\par\vskip 1mm}
-\newenvironment{recipesummary}{\scriptsize\setstretch{0.5}}{\par\vskip 1mm}
-\newenvironment{ingredients}{\small}{\vskip 1mm}
-\newcommand{\ingredient}[1]{\hskip0.5em\textbullet\hskip0.5em#1\par}
-\newenvironment{directions}{\small}{}
+\newcommand{\recipetitle}[1]{\large\meal: \textbf{#1}\par\vskip 2mm}
+\newcommand{\recipepicture}[1]{\includegraphics[width=\linewidth,height=0.6\linewidth,clip]{#1}\par\vskip 2mm}
+\newenvironment{recipesummary}{\small\setstretch{0.5}}{\par\vskip 1mm}
+\newenvironment{ingredients}{\small}{\vskip 2mm}
+\newcommand{\ingredientheading}[1]{\vskip 1mm\textbf{#1}\par}
+\newcommand{\ingredient}[1]{\textbullet\hskip0.5em\hangindent 0.9em#1\par}
+\newenvironment{directions}{\small}{\vskip 5mm}
 
 \begin{document}
 

@@ -42,7 +42,7 @@ def process_recipe(name, url):
         out_picture.write(picture_data)
 
     ingredients = [li.text.strip() for li in ingredienten.find_all('li')]
-    ingredients = [ingredient for ingredient in ingredients if ingredient]
+    ingredients = [ingredient[0].lower() + ingredient[1:] for ingredient in ingredients if ingredient]
     bereiding.find('h2').extract()
     directions = bereiding.text.strip()
 
@@ -62,7 +62,10 @@ def process_recipe(name, url):
 
         out_recipe.write('\\begin{ingredients}\n')
         for ingredient in ingredients:
-            out_recipe.write('\\ingredient{%s}\n' % tex_encode(ingredient))
+            if ingredient.lower().startswith('voor'):
+                out_recipe.write('\\ingredientheading{%s}\n' % tex_encode(ingredient.capitalize()))
+            else:
+                out_recipe.write('\\ingredient{%s}\n' % tex_encode(ingredient))
         out_recipe.write('\\end{ingredients}\n')
         out_recipe.write('\n')
 
