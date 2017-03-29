@@ -42,17 +42,18 @@ def process_recipe(name, url):
         out_picture.write(picture_data)
 
     ingredients = [li.text.strip() for li in ingredienten.find_all('li')]
+    ingredients = [ingredient for ingredient in ingredients if ingredient]
     bereiding.find('h2').extract()
     directions = bereiding.text.strip()
 
     with open(os.path.join('include', '%s.tex' % name), mode='wt', encoding='utf-8') as out_recipe:
-        out_recipe.write('\\begin{recipe}{%s}\n' % tex_encode(title))
+        out_recipe.write('\\begin{recipe}\n')
         out_recipe.write('%% %s\n' % url)
         out_recipe.write('\n')
 
-        out_recipe.write('\\begin{recipepicture}\n')
-        out_recipe.write('\\includegraphics{pictures/%s}\n' % picture_name)
-        out_recipe.write('\\end{recipepicture}\n')
+        out_recipe.write('\\recipepicture{pictures/%s}\n' % picture_name)
+
+        out_recipe.write('\\recipetitle{%s}\n' % tex_encode(title))
 
         out_recipe.write('\\begin{recipesummary}\n')
         out_recipe.write('%s\n' % tex_encode(summary))
@@ -61,7 +62,7 @@ def process_recipe(name, url):
 
         out_recipe.write('\\begin{ingredients}\n')
         for ingredient in ingredients:
-            out_recipe.write('\\item %s\n' % tex_encode(ingredient))
+            out_recipe.write('\\ingredient{%s}\n' % tex_encode(ingredient))
         out_recipe.write('\\end{ingredients}\n')
         out_recipe.write('\n')
 
@@ -99,7 +100,7 @@ with open(os.path.join('include', 'dagmenus.tex'), mode='wt', encoding='utf-8') 
                 name = url.split('/')[-2]
                 print('%s: %s (%s)' % (meal, title, url))
 
-                out_dagmenus.write('\\input{include/%s.tex}\n' % name)
+                out_dagmenus.write('\\includerecipe{%s}{include/%s.tex}\n' % (meal, name))
 
                 process_recipe(name, url)
 

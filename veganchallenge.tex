@@ -1,21 +1,47 @@
-\documentclass{article}
+\documentclass[a4paper,landscape,10pt]{article}
 
 \usepackage[utf8]{inputenc}
+\usepackage{cmbright}
 \usepackage[T1]{fontenc}
 \usepackage[pdftex]{graphicx}
 \usepackage{textcomp}
+\usepackage[margin=1cm,top=0.5cm]{geometry}
+\usepackage{multicol}
+\usepackage{setspace}
+\usepackage[dutch]{babel}
 
 \DeclareUnicodeCharacter{00BC}{1/4}
 \DeclareUnicodeCharacter{00BD}{1/2}
 \DeclareUnicodeCharacter{00BD}{3/4}
 \DeclareUnicodeCharacter{2103}{\textdegree{}C}
 
-\newenvironment{dagmenu}[1]{}{}
-\newenvironment{recipe}[1]{}{}
-\newenvironment{recipepicture}{}{}
-\newenvironment{recipesummary}{}{}
-\newenvironment{ingredients}{\begin{itemize}}{\end{itemize}}
-\newenvironment{directions}{}{}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\columnsep}{1cm}
+\setlength{\columnseprule}{0.5pt}
+\linespread{0.9}
+
+\newcommand{\includerecipe}[2]{\def\meal{#1}\input{#2}}
+\newenvironment{dagmenu}[1]{%
+  {\centering\textbf{#1}\par}%
+  \begin{multicols*}{4}%
+  \gdef\recipebreak{}%
+}{%
+  \end{multicols*}%
+  \clearpage%
+}
+\newenvironment{recipe}{%
+  \recipebreak%
+  \gdef\recipebreak{\par\columnbreak}%
+}{%
+}
+\newcommand{\recipetitle}[1]{\meal: \textbf{#1}\par\vskip 1mm}
+\newcommand{\recipepicture}[1]{\includegraphics[width=\linewidth,height=0.6\linewidth,clip]{#1}\par\vskip 1mm}
+\newenvironment{recipesummary}{\scriptsize\setstretch{0.5}}{\par\vskip 1mm}
+\newenvironment{ingredients}{\small}{\vskip 1mm}
+\newcommand{\ingredient}[1]{\hskip0.5em\textbullet\hskip0.5em#1\par}
+\newenvironment{directions}{\small}{}
 
 \begin{document}
 
