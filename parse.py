@@ -41,6 +41,16 @@ def process_recipe(name, url):
     with open(os.path.join('pictures', picture_name), mode='wb') as out_picture:
         out_picture.write(picture_data)
 
+    recipeinfo = soup.find(class_='recipeinfo')
+    try:
+        preparation_time = recipeinfo.find('img', src='https://veganchallenge.nl/wp-content/themes/veganchallenge3/img/time.png').nextSibling.string.strip().lower()
+    except AttributeError:
+        preparation_time = ''
+    try:
+        num_persons = recipeinfo.find('img', src='https://veganchallenge.nl/wp-content/themes/veganchallenge3/img/people.png').nextSibling.string.strip().lower().replace('-persoons', ' personen')
+    except AttributeError:
+        num_persons = ''
+
     ingredients = [li.text.strip() for li in ingredienten.find_all('li')]
     ingredients = [ingredient[0].lower() + ingredient[1:] for ingredient in ingredients if ingredient]
     bereiding.find('h2').extract()
@@ -56,6 +66,7 @@ def process_recipe(name, url):
         out_recipe.write('\\recipetitle{%s}\n' % tex_encode(title))
 
         out_recipe.write('\\begin{recipesummary}\n')
+        out_recipe.write('\\recipemetadata{%s, %s}\n' % (tex_encode(num_persons), tex_encode(preparation_time)))
         out_recipe.write('%s\n' % tex_encode(summary))
         out_recipe.write('\\end{recipesummary}\n')
         out_recipe.write('\n')
